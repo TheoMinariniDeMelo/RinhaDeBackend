@@ -1,6 +1,12 @@
 plugins {
     id 'java'
 }
+java {
+    toolchain {
+        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_17
+    }
+}
 
 group = 'org.example'
 version = '1.0-SNAPSHOT'
@@ -14,8 +20,14 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     implementation 'io.undertow:undertow-core:2.3.9.Final'
     implementation 'io.undertow:undertow-servlet:2.3.9.Final'
+    implementation 'org.postgresql:postgresql:42.6.0'
+    implementation 'com.rabbitmq:amqp-client:5.16.0'
 }
 
 test {
     useJUnitPlatform()
+}
+task run(type: JavaExec) {
+    mainClass = 'org.example.Main'  // Substitua pelo nome da sua classe principal
+    classpath = sourceSets.main.runtimeClasspath
 }

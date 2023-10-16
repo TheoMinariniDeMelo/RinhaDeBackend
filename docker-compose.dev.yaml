@@ -1,0 +1,20 @@
+version: '3.5'
+services:
+  rabbitMQ:
+    image: "rabbitmq:3.5-management" # Use a imagem com o plugin de gerenciamento
+    ports:
+      - "5672:5672"
+      - "15672:15672" # Porta para a interface web do RabbitMQ Management
+    environment:
+      RABBITMQ_DEFAULT_USER: root
+      RABBITMQ_DEFAULT_PASS: root
+      RABBITMQ_DEFAULT_VHOST: "/"
+  db: # Banco de dados
+    image: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: root
+    ports:
+      - "5432:5432"
+      # ...
