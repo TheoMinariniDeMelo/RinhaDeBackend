@@ -1,7 +1,8 @@
 version: '3.5'
 services:
   api1: # API - Instância 01
-    image: api
+    build:
+      context: .
     hostname: api1
     depends_on:
       - db
@@ -14,7 +15,8 @@ services:
           memory: '500MB'
 
   api2: # API - Instância 01
-    image: api
+    build:
+      context: .
     hostname: api2
     depends_on:
       - db
