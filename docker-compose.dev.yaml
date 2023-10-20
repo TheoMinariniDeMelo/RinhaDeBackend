@@ -12,9 +12,9 @@ services:
   db: # Banco de dados
     image: postgres
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: root
+      POSTGRES_USER: rinha
+      POSTGRES_PASSWORD: rinha
+      POSTGRES_DB: Rinha
     ports:
       - "5432:5432"
       # ...

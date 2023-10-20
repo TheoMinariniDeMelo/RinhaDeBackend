@@ -1,4 +1,5 @@
 rootProject.name = 'Stackoverflow'
+
 dependencyResolutionManagement {
     repositories.mavenCentral()
 }
