@@ -1,20 +1,26 @@
-version: '3.5'
+version: '3.8'
 services:
   rabbitMQ:
-    image: "rabbitmq:3.5-management" # Use a imagem com o plugin de gerenciamento
+    image: "rabbitmq:3.5-management"
     ports:
       - "5672:5672"
-      - "15672:15672" # Porta para a interface web do RabbitMQ Management
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: root
       RABBITMQ_DEFAULT_PASS: root
       RABBITMQ_DEFAULT_VHOST: "/"
-  db: # Banco de dados
+  db:
     image: postgres
+    networks:
+      - net
+    volumes:
+      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
     environment:
       POSTGRES_USER: rinha
       POSTGRES_PASSWORD: rinha
       POSTGRES_DB: Rinha
     ports:
       - "5432:5432"
-      # ...
+networks:
+  net:
+    driver: bridge

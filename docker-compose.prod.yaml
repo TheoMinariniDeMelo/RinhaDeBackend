@@ -1,66 +1,75 @@
 version: '3.5'
+networks:
+  rinha:
+    driver: bridge
 services:
   api1: # API - Instância 01
+    ports:
+      - "8082:8080"
+    networks:
+      - rinha
     build:
       context: .
     hostname: api1
     depends_on:
+      - rabbitMQ
       - db
-    expose:
-      - "80"
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'
-          memory: '500MB'
+   # deploy:
+   #   resources:
+   #     limits:
+   #       cpus: '0.25'
+   #       memory: '500MB'
 
-  api2: # API - Instância 01
+  api2: # API - Instância 02 (Note a correção na numeração)
+    networks:
+      - rinha
     build:
       context: .
     hostname: api2
     depends_on:
+      - rabbitMQ
       - db
-    expose:
-      - "80"
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'
-          memory: '500MB'
+    ports:
+      - "8081:8080"
+    #deploy:
+    #  resources:
+    #    limits:
+    #      cpus: '0.25'
+    #      memory: '500MB'
 
   nginx: # Load Balancer
+    networks:
+      - rinha
     image: nginx:latest
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - api1
       - api2
+      - db
+      - rabbitMQ
     ports:
-      - "9999:9999"
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'
-          memory: '500MB'
+      - "8080:9999"
+    #deploy:
+    #  resources:
+    #    limits:
+    #      cpus: '0.25'
+    #      memory: '500MB'
+
   rabbitMQ:
     image: rabbitmq
-    ports:
-      - "5672"
+    networks:
+      - rinha
     environment:
       RABBITMQ_DEFAULT_USER: root
       RABBITMQ_DEFAULT_PASS: root
       RABBITMQ_DEFAULT_VHOST: "/"
+
   db: # Banco de dados
     image: postgres
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
+      POSTGRES_USER: rinha
+      POSTGRES_PASSWORD: rinha
       POSTGRES_DB: Rinha
-    ports:
-      - "5432:5432"
-    deploy:
-      resources:
-        limits:
-          cpus: '0.75'
-          memory: '1500MB'
-    # ...
+    volumes:
+      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql

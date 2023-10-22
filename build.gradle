@@ -1,21 +1,7 @@
 plugins {
     id 'java'
-
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
-java {
-    toolchain {
-        targetCompatibility JavaVersion.VERSION_17
-        sourceCompatibility JavaVersion.VERSION_17
-    }
-}
-
-group = 'org.example'
-version = '1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -25,13 +11,43 @@ dependencies {
     implementation 'com.rabbitmq:amqp-client:5.16.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
     implementation 'commons-io:commons-io:2.14.0'
-
 }
+shadowJar {
+    mergeServiceFiles()
+    minimize()
+    manifest {
+        attributes 'Main-Class': 'org.example.Main'
+    }
+
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA'  // Exclui arquivos de assinatura
+    exclude 'META-INF/LICENSE'  // Exclui arquivos de licença
+    exclude 'META-INF/NOTICE'  // Exclui arquivos de aviso
+    exclude 'module-info.class'  // Exclui informações do módulo, se houver
+}
+java {
+    toolchain {
+        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_17
+    }
+}
+tasks.register('run', JavaExec) {
+    mainClass = 'org.example.Main'
+    classpath = sourceSets.main.runtimeClasspath
+}
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.example.Main'
+        attributes 'Class-Path': tasks.run.classpath
+    }
+}
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
 
 test {
     useJUnitPlatform()
-}
-tasks.register('run', JavaExec) {
-    mainClass = 'org.example.Main'  // Substitua pelo nome da sua classe principal
-    classpath = sourceSets.main.runtimeClasspath
 }
