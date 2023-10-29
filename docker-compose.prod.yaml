@@ -4,8 +4,6 @@ networks:
     driver: bridge
 services:
   api1: # API - Instância 01
-    ports:
-      - "8082:8080"
     networks:
       - rinha
     build:
@@ -14,11 +12,11 @@ services:
     depends_on:
       - rabbitMQ
       - db
-   # deploy:
-   #   resources:
-   #     limits:
-   #       cpus: '0.25'
-   #       memory: '500MB'
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '0.25'
+    #       memory: '500MB'
 
   api2: # API - Instância 02 (Note a correção na numeração)
     networks:
@@ -29,8 +27,6 @@ services:
     depends_on:
       - rabbitMQ
       - db
-    ports:
-      - "8081:8080"
     #deploy:
     #  resources:
     #    limits:
@@ -49,7 +45,7 @@ services:
       - db
       - rabbitMQ
     ports:
-      - "8080:9999"
+      - "9999:9999"
     #deploy:
     #  resources:
     #    limits:
@@ -67,6 +63,8 @@ services:
 
   db: # Banco de dados
     image: postgres
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: rinha
       POSTGRES_PASSWORD: rinha

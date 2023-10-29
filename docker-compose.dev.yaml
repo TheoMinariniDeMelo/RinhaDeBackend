@@ -1,5 +1,10 @@
 version: '3.8'
 services:
+  dev:
+    build:
+      context: .
+    ports:
+      - "8080:8080"
   rabbitMQ:
     image: "rabbitmq:3.5-management"
     ports:

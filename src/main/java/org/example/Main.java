@@ -18,21 +18,25 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Main {
+
     public static List<Object> jsonParsed;
 
     public static void main(String[] args) {
+        System.out.println("hehehe");
         RoutingHandler routingHandlerPeople = new RoutingHandler();
         routingHandlerPeople.add("POST", "/people", new HttpHandlerManagerPeoplesRegister());
         routingHandlerPeople.add("GET", "/people", new httpHandlerGetUser());
 
         Undertow server = Undertow.builder()
-                .addHttpListener(8080, "localhost")
+                .addHttpListener(8080, "0.0.0.0")
                 .setHandler(routingHandlerPeople)
                 .build();
         server.start();
     }
 
     public static void setJsonParser(String json) throws JsonProcessingException {
+        System.out.printf("chegou aqui");
+
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode node = objectMapper.readTree(json);
         List<Object> nodes = new ArrayList<>();
@@ -117,7 +121,6 @@ public class Main {
                                         values.append(value[i]).append(" | ");
                                     }
                                 }
-                                ;
                                 return values;
                             }
                             return x + " | ";
@@ -132,6 +135,7 @@ public class Main {
                 exchange.getResponseSender().send(String.valueOf(id));
 
             } catch (Exception ignored) {
+                throw new RuntimeException();
             }
             System.gc();
 
@@ -193,7 +197,6 @@ public class Main {
             } catch (SQLException e) {
                 throw new RuntimeException();
             }
-            ;
         }
     }
 
@@ -201,6 +204,8 @@ public class Main {
         return (consumerTag, message) -> {
             String[] body = new String(message.getBody(), StandardCharsets.UTF_8).split("\\|");
             try (java.sql.Connection connection = connection()) {
+                System.out.println("heheheheeh chegou aqui");
+
                 connection.setAutoCommit(false);
                 PreparedStatement stm = connection.prepareStatement(
                         " INSERT INTO users (id, nome, apelido, nascimento, stack, agregado) VALUES(?, ?, ?, ?, ?, ?)"
@@ -219,9 +224,8 @@ public class Main {
                 connection.commit();
                 stm.close();
             } catch (SQLException ignored) {
+                throw new RuntimeException();
             }
         };
     }
 }
-;
-
