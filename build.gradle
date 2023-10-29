@@ -2,51 +2,45 @@ plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
+
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     implementation 'org.postgresql:postgresql:42.6.0'
-    implementation 'io.undertow:undertow-core:2.3.9.Final'
+    implementation 'io.undertow:undertow-servlet:2.3.10.Final'
     implementation 'io.undertow:undertow-servlet:2.3.9.Final'
     implementation 'com.rabbitmq:amqp-client:5.16.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
-    implementation 'commons-io:commons-io:2.14.0'
+    implementation "commons-io:commons-io:2.14.0"
+    implementation 'org.jboss.logging:jboss-logging:3.5.3.Final'
 }
-shadowJar {
-    mergeServiceFiles()
-    minimize()
-    manifest {
-        attributes 'Main-Class': 'org.example.Main'
-    }
 
-    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA'  // Exclui arquivos de assinatura
-    exclude 'META-INF/LICENSE'  // Exclui arquivos de licença
-    exclude 'META-INF/NOTICE'  // Exclui arquivos de aviso
-    exclude 'module-info.class'  // Exclui informações do módulo, se houver
-}
+
 java {
     toolchain {
         targetCompatibility JavaVersion.VERSION_17
         sourceCompatibility JavaVersion.VERSION_17
     }
 }
+
 tasks.register('run', JavaExec) {
-    mainClass = 'org.example.Main'
+    main = 'org.example.Main'  // Use 'main' em vez de 'mainClass'
     classpath = sourceSets.main.runtimeClasspath
 }
+
 jar {
     manifest {
         attributes 'Main-Class': 'org.example.Main'
-        attributes 'Class-Path': tasks.run.classpath
+        attributes 'Class-Path': sourceSets.main.runtimeClasspath
     }
 }
+
 group = 'org.example'
 version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
 }
-
 
 test {
     useJUnitPlatform()
